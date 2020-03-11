@@ -3,6 +3,8 @@ import { readRemoteFile } from 'react-papaparse'
 import moment from 'moment'
 import Modal from 'react-modal';
 import {CronJob} from 'cron';
+import {VirusDataTableRow} from './VirusDataTableRow';
+import {CountryDetails} from './CountryDetails';
 
 export class VirusDataTableArea extends React.Component{
 
@@ -18,7 +20,8 @@ export class VirusDataTableArea extends React.Component{
 
     constructor(props) {
         super(props);
-        this.state = { data: [],
+        this.state = {
+            data: [],
             filterString:'',
             filteredData: [],
             showModal: false,
@@ -120,67 +123,17 @@ export class VirusDataTableArea extends React.Component{
 
     render() {
         return( <div>
-                    <h1 className="display-3">
-                        {"COVID19 cases by country"}
-                    </h1>
-                    <h1 className="display-4">
-                        {"data fetched on " + moment(new Date()).format('MMMM Do YYYY')}
-                    </h1>
+                    <h1 className="display-3">{"COVID19 cases by country"}</h1>
+                    <h1 className="display-4">{"data fetched on " + moment(new Date()).format('MMMM Do YYYY')}</h1>
                     <Modal isOpen={this.state.showModal}
                            contentLabel="Modal for details"
                            onRequestClose={() => this.handleCloseModal()}
                            shouldCloseOnOverlayClick={true}
                            ariaHideApp={false}
-                           className="Modal"
-                           >
-                        <h1>
-                            {this.state.selectedCountry[1]}
-                        </h1>
-                        <table className={"table table-borderless"}>
-                            <tbody>
-                                <tr>
-                                    <td>
-                                        Confirmed:
-                                    </td>
-                                    <td>
-                                        {this.state.selectedCountry[3]}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        Deaths:
-                                    </td>
-                                    <td>
-                                        {this.state.selectedCountry[4]}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        Recovered:
-                                    </td>
-                                    <td>
-                                        {this.state.selectedCountry[5]}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        New infected:
-                                    </td>
-                                    <td>
-                                        {(Number.parseInt(this.state.selectedCountry[3])-Number.parseInt(this.state.selectedCountryPreviousDayData[3]))}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        New deaths:
-                                    </td>
-                                    <td>
-                                        {(Number.parseInt(this.state.selectedCountry[4])-Number.parseInt(this.state.selectedCountryPreviousDayData[4]))}
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                        <button className={"btn btn-info"} onClick={() => this.handleCloseModal()}>Close</button>
+                           className="Modal">
+                        <CountryDetails selectedCountry={this.state.selectedCountry}
+                                        selectedPreviousCountry={this.state.selectedCountryPreviousDayData}
+                                        handleCloseModal={() => this.handleCloseModal()} />
                     </Modal>
                     <input
                         className={"form-control"}
@@ -191,30 +144,14 @@ export class VirusDataTableArea extends React.Component{
                     <table className={"table"}>
                         <thead className={"thead-dark"}>
                             <tr>
-                                <th>
-                                    Country
-                                </th>
-                                <th>
-                                    Infected
-                                </th>
-                                <th>
-                                    Deaths
-                                </th>
+                                <th>Country</th>
+                                <th>Infected</th>
+                                <th>Deaths</th>
                             </tr>
                         </thead>
                         <tbody>
                         {this.state.filteredData.map((row) => (
-                            <tr key={row} onClick={() => this.handleOpenModal(row[1])}>
-                                <td>
-                                    {row[1]}
-                                </td>
-                                <td>
-                                    {row[3]}
-                                </td>
-                                <td>
-                                    {row[4]}
-                                </td>
-                            </tr>
+                            <VirusDataTableRow key={row} rowData={row} handleOpenModalClicked={() => this.handleOpenModal(row[1])}/>
                         ))}
                         </tbody>
                     </table>

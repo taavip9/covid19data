@@ -2,6 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="9114403e-36d6-4678-a576-a8ef8ce9d3ac" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/src/mainpage/CountryDetails.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/mainpage/VirusDataTableRow.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/mainpage/VirusDataTableArea.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/mainpage/VirusDataTableArea.js" afterDir="false" />
     </list>
@@ -14,8 +16,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="JavaScript File" />
         <option value="CSS File" />
+        <option value="JavaScript File" />
       </list>
     </option>
   </component>
