@@ -30,7 +30,7 @@ export class VirusDataTableArea extends React.Component{
         new CronJob('00 00 00 * * *', this.fetchData(), null, true, 'Europe/Tallinn');
     }
 
-    handleOpenModal (key) {
+    handleOpenModal(key) {
         var country
         var countryPreviousDayData
         this.state.filteredData.forEach(row => {
@@ -50,7 +50,7 @@ export class VirusDataTableArea extends React.Component{
         });
     }
 
-    handleCloseModal () {
+    handleCloseModal() {
         this.setState({
             showModal: false,
             selectedCountryName:''
@@ -76,50 +76,36 @@ export class VirusDataTableArea extends React.Component{
         })
     }
 
+    addStatistics(filteredResults, result){
+        filteredResults[3] = filteredResults[3]+ Number(result[3]);
+        filteredResults[4] = filteredResults[4]+ Number(result[4]);
+        filteredResults[5] = filteredResults[5]+ Number(result[5]);
+        return filteredResults;
+    }
+
     updateData(results, isPreviousDayStatistics){
         var filteredResults = [];
-        let usTotalInfected=0;
-        let usTotalDeaths=0;
-        let usTotalRecovered=0;
-        let chinaTotalInfected=0;
-        let chinaTotalDeaths=0;
-        let chinaTotalRecovered=0;
-        let australiaTotalInfected=0;
-        let australiaTotalDeaths=0;
-        let australiaTotalRecovered=0;
-        let canadaTotalInfected=0;
-        let canadaTotalDeaths=0;
-        let canadaTotalRecovered=0;
+        filteredResults.push(["","Canada","",0,0,0,"",""]);
+        filteredResults.push(["","US","",0,0,0,"",""]);
+        filteredResults.push(["","Mainland China","",0,0,0,"",""]);
+        filteredResults.push(["","Australia","",0,0,0,"",""]);
         results.data.forEach(result => {
             let countryName = result[1];
             if(countryName==="Mainland China"){
-                chinaTotalInfected = chinaTotalInfected+ Number(result[3]);
-                chinaTotalDeaths = chinaTotalDeaths+ Number(result[4]);
-                chinaTotalRecovered = chinaTotalRecovered+ Number(result[5]);
+                filteredResults[2] = this.addStatistics(filteredResults[2], result);
             }else if(countryName==="US"){
-                usTotalInfected = usTotalInfected+ Number(result[3]);
-                usTotalDeaths = usTotalDeaths+ Number(result[4]);
-                usTotalRecovered = usTotalRecovered+ Number(result[5]);
+                filteredResults[1] = this.addStatistics(filteredResults[1], result);
             }else if(countryName==="Canada"){
-                canadaTotalInfected = canadaTotalInfected+ Number(result[3]);
-                canadaTotalDeaths = canadaTotalDeaths+ Number(result[4]);
-                canadaTotalRecovered = canadaTotalRecovered+ Number(result[5]);
+                filteredResults[0] = this.addStatistics(filteredResults[0], result);
             }else if(countryName==="Australia"){
-                australiaTotalInfected = australiaTotalInfected+ Number(result[3]);
-                australiaTotalDeaths = australiaTotalDeaths+ Number(result[4]);
-                australiaTotalRecovered = australiaTotalRecovered+ Number(result[5]);
+                filteredResults[3] = this.addStatistics(filteredResults[3], result);
             }else{
-                if(result.length!==1){
+                if(result.length!==1 && countryName!=="Country/Region"){
                     filteredResults.push(result);
                 }
             }
         });
-        filteredResults.push(["","Canada","",canadaTotalInfected,canadaTotalDeaths,canadaTotalRecovered,"",""]);
-        filteredResults.push(["","US","",usTotalInfected,usTotalDeaths,usTotalRecovered,"",""]);
-        filteredResults.push(["","Mainland China","",chinaTotalInfected,chinaTotalDeaths,chinaTotalRecovered,"",""]);
-        filteredResults.push(["","Australia","",australiaTotalInfected,australiaTotalDeaths,australiaTotalRecovered,"",""]);
         filteredResults.sort((a,b) => b[3] - a[3]);
-        filteredResults.splice(0,1);
         if(!isPreviousDayStatistics){
             this.setState({
                 data:filteredResults,
@@ -141,7 +127,7 @@ export class VirusDataTableArea extends React.Component{
                         {"data fetched on " + moment(new Date()).format('MMMM Do YYYY')}
                     </h1>
                     <Modal isOpen={this.state.showModal}
-                        contentLabel="Minimal Modal Example"
+                           contentLabel="Modal for details"
                            onRequestClose={() => this.handleCloseModal()}
                            shouldCloseOnOverlayClick={true}
                            ariaHideApp={false}
