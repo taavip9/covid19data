@@ -2,6 +2,7 @@ import React from 'react';
 import { readRemoteFile } from 'react-papaparse'
 import moment from 'moment'
 import Modal from 'react-modal';
+import {CronJob} from 'cron';
 
 export class VirusDataTableArea extends React.Component{
 
@@ -26,6 +27,7 @@ export class VirusDataTableArea extends React.Component{
             selectedCountryPreviousDayData:''
         };
         this.updateData = this.updateData.bind(this);
+        new CronJob('00 00 00 * * *', this.fetchData(), null, true, 'Europe/Tallinn');
     }
 
     handleOpenModal (key) {
@@ -55,16 +57,23 @@ export class VirusDataTableArea extends React.Component{
         });
     }
 
-    componentDidMount() {
+    fetchData() {
         let date = moment(new Date()).subtract(1,"days");
-        let address = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports/'+moment(date).format('MM-DD-YYYY')+'.csv';
-        readRemoteFile(address, {
+        let address = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports/';
+        readRemoteFile(address+moment(date).format('MM-DD-YYYY')+'.csv', {
             complete: (results) => this.updateData(results, false)
         });
-        let addressForPreviousDay = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports/'+moment(date.subtract(1,"days")).format('MM-DD-YYYY')+'.csv';
-        readRemoteFile(addressForPreviousDay, {
+        readRemoteFile(address+moment(date.subtract(1,"days")).format('MM-DD-YYYY')+'.csv', {
             complete: (results) => this.updateData(results, true)
         });
+    }
+
+    handleFilterInputChanged(event){
+        var filteredData = this.state.data.filter(e=> e[1].toLowerCase().includes(event.target.value.toLowerCase()));
+        this.setState({
+            filterString: event.target.value,
+            filteredData: filteredData
+        })
     }
 
     updateData(results, isPreviousDayStatistics){
@@ -121,14 +130,6 @@ export class VirusDataTableArea extends React.Component{
                 previousDayData:filteredResults
             })
         }
-    }
-
-    handleFilterInputChanged(event){
-        var filteredData = this.state.data.filter(e=> e[1].toLowerCase().includes(event.target.value.toLowerCase()));
-        this.setState({
-            filterString: event.target.value,
-            filteredData: filteredData
-        })
     }
 
     render() {
